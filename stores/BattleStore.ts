@@ -103,6 +103,7 @@ class Battle {
       });
     const defending = sort;
     const atacking = army;
+
     this.atacking(atacking, defending);
   }
 
@@ -126,11 +127,18 @@ class Battle {
     this.atacking(atacking, defending);
   }
 
-  @action.bound atacking(atacking: any, defending: any) {
+  @action.bound atacking(atacking: IArmyToBattle, defending: IArmyToBattle) {
+    // if (atacking.army[0].totalAtackSuccess() > defending.army[0].totalAtackSuccess()) {
+    //   defending.army[0].lifeReduction(atacking.army[0].totalDamage());
+    //   defending.checkingTotalHealthArmy();
+    // }
+
     defending.army[0].lifeReduction(atacking.army[0].totalDamage());
     defending.checkingTotalHealthArmy();
 
     this.checkingDied();
+    this.totalHealth.length = 0;
+
     this.chekingTotalHealth();
     setTimeout(() => this.checkingStrategy(defending), 20);
   }
@@ -149,15 +157,11 @@ class Battle {
   @action.bound chekingTotalHealth() {
     const armyArr = [...this.armyToBattle.map(army => army)];
 
-    this.totalHealth.length = 0;
-
     armyArr.forEach(arm => {
-      const totalCountryHealth = {
+      this.totalHealth.push({
         health: Math.floor(arm.totalHealthArmy),
         name: arm.name,
-      };
-
-      this.totalHealth.push(totalCountryHealth);
+      });
     });
   }
 }

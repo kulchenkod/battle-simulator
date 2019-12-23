@@ -24,14 +24,19 @@ class Battle extends React.Component<IProps, {}> {
         <div className="battle">
           <h1>TOTAL HEALTH: </h1>
           {totalHealth &&
-            totalHealth.map(({ name, health }) => <span>{`${name} - ${health}`}</span>)}
+            totalHealth.map(({ name, health }, index) => (
+              <span key={`countryKey-${index}`}>{`${name} - ${health}`}</span>
+            ))}
           <button className="battle__start" onClick={startBattle}>
             Start
           </button>
         </div>
         <div className="died__army">
           <h1>Died army: </h1>
-          {diedArmy && diedArmy.map(({ name }) => <span>{`${name} - 0`}</span>)}
+          {diedArmy &&
+            diedArmy.map(({ name }, index) => (
+              <span key={`diedKey-${index}`}>{`${name} - 0`}</span>
+            ))}
         </div>
         <style jsx>{`
           .battle,

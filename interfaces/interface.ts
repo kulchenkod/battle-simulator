@@ -23,13 +23,9 @@ export interface IArmyToBattle {
   };
   strategy: string;
   name: string;
-  army: {
-    units: Array<IVehicles | ISoldiers>;
-    defaultConfig: {
-      config: IConfig;
-    };
-  }[];
+  army: IArmy[];
   totalHealthArmy: number;
+  checkingTotalHealthArmy(): void;
 }
 
 export interface INameAndStrategyArmy {
@@ -60,4 +56,7 @@ export interface IArmy {
   defaultConfig: {
     config: IConfig;
   };
+  lifeReduction(hp: number): void;
+  totalDamage(): number;
+  totalAtackSuccess(): number;
 }

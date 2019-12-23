@@ -73,16 +73,14 @@ class ArmyConfig extends Component<IProps, any> {
       nameArmy: {
         ...this.state.nameArmy,
         [name]: {
+          ...this.state.nameArmy[name],
           country: value,
         },
       },
     });
   }
 
-  onChangeSelect(event: React.ChangeEvent<any>) {
-    const value = event.target.value as string;
-    const name = event.target.name;
-
+  onChangeSelect({ target: { name, value } }: React.ChangeEvent<any>) {
     this.setState({
       nameArmy: {
         ...this.state.nameArmy,
@@ -118,6 +116,13 @@ class ArmyConfig extends Component<IProps, any> {
     const { setConfig } = this.props;
     const { nameArmy } = this.state;
 
+    for (let key in nameArmy) {
+      if (!nameArmy[key].strategy) {
+        alert(`Choose strategy for ${nameArmy[key].country}`);
+        return;
+      }
+    }
+
     setConfig!(nameArmy);
 
     Router.push('/battle');
@@ -148,9 +153,10 @@ class ArmyConfig extends Component<IProps, any> {
                     label="Name army"
                     variant="outlined"
                   />
-                  <FormControl required style={{ width: 200 }}>
+                  <FormControl required={true} style={{ width: 200 }}>
                     <InputLabel id="demo-simple-select-label">Strategy</InputLabel>
                     <Select
+                      required={true}
                       name={`input-${index}`}
                       value={
                         (this.state.nameArmy[`input-${index}`] &&
