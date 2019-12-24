@@ -1,3 +1,8 @@
+export interface IUnits {
+  health: number;
+  reacharge: number;
+}
+
 export interface ISoldiers extends IUnits {
   life: boolean;
   type: string;
@@ -10,11 +15,6 @@ export interface ISoldiers extends IUnits {
 export interface IVehicles extends ISoldiers {
   numberOperators: number;
   operators: ISoldiers[];
-}
-
-export interface IUnits {
-  health: number;
-  reacharge: number;
 }
 
 export interface IArmyToBattle {

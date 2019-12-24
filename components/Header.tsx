@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import Button from '@material-ui/core/Button';
 
 class Header extends Component {
   render() {
@@ -9,7 +10,9 @@ class Header extends Component {
           <ul>
             <li>
               <Link href="/">
-                <a>Home</a>
+                <Button variant="contained" color="primary">
+                  <a>Home</a>
+                </Button>
               </Link>
             </li>
           </ul>

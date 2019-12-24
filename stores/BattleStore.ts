@@ -9,7 +9,7 @@ class Battle {
   @observable diedArmy: IDiedArmy[] = [];
   @observable totalHealth: ITotalHealth[] = [];
   @observable defaultConfig: any = ConfigBattle.getConfigBattle();
-  @observable winnerArmy: string = '';
+  @observable winnerArmyName: string = '';
   @observable numbersOfArmy: string[] = ['', ''];
   @observable isDisableAdd: boolean = false;
   @observable isDisableDelete: boolean = true;
@@ -57,9 +57,7 @@ class Battle {
 
     this.createArmys();
 
-    this.winnerArmy = '';
-
-    this.chekingTotalHealth();
+    this.chekingTotalHealth(this.armyToBattle);
     this.checkingStrategy(this.armyToBattle[0]);
   }
 
@@ -81,12 +79,11 @@ class Battle {
       }
     }
 
-    alert(this.armyToBattle[0].name);
-
-    this.clearBattle();
+    this.winnerArmyName = this.armyToBattle[0].name;
   }
 
   @action.bound clearBattle() {
+    this.winnerArmyName = '';
     this.numbersOfArmy = ['', ''];
     this.armyToBattle.length = 0;
     this.diedArmy.length = 0;
@@ -128,41 +125,54 @@ class Battle {
   }
 
   @action.bound atacking(atacking: IArmyToBattle, defending: IArmyToBattle) {
+    // Ниже закоментирован код который меняет ход битвы, атакующая армия сравнивает свой шанс успешной атаки с армией которая защищается,
+    //  и если у неё шанс успешной атаки больше, то она атакует, если меньше, то атаки не будет.
+
     // if (atacking.army[0].totalAtackSuccess() > defending.army[0].totalAtackSuccess()) {
     //   defending.army[0].lifeReduction(atacking.army[0].totalDamage());
     //   defending.checkingTotalHealthArmy();
     // }
 
+    // Для использования инструкции что выше, надо удалить нижний код :
+    // defending.army[0].lifeReduction(atacking.army[0].totalDamage());
+    // defending.checkingTotalHealthArmy();
+
     defending.army[0].lifeReduction(atacking.army[0].totalDamage());
     defending.checkingTotalHealthArmy();
 
-    this.checkingDied();
-    this.totalHealth.length = 0;
+    this.chekingTotalHealth(defending);
 
-    this.chekingTotalHealth();
+    this.checkingDied();
+
     setTimeout(() => this.checkingStrategy(defending), 20);
   }
 
   @action.bound checkingDied() {
-    this.armyToBattle.forEach(arm => {
+    this.armyToBattle = this.armyToBattle.filter(arm => {
       if (arm.army[0].units.length === 0) {
-        const index = this.armyToBattle.findIndex(currentArmy => currentArmy.name === arm.name);
-
         this.diedArmy.push(arm);
-        this.armyToBattle.splice(index, 1);
       }
+      return arm.army[0].units.length > 0;
     });
   }
 
-  @action.bound chekingTotalHealth() {
-    const armyArr = [...this.armyToBattle.map(army => army)];
-
-    armyArr.forEach(arm => {
-      this.totalHealth.push({
-        health: Math.floor(arm.totalHealthArmy),
-        name: arm.name,
+  @action.bound chekingTotalHealth(army: any) {
+    if (Array.isArray(army)) {
+      army.forEach(arm => {
+        this.totalHealth = [
+          ...this.totalHealth,
+          {
+            health: arm.totalHealthArmy,
+            name: arm.name,
+          },
+        ];
       });
-    });
+    } else {
+      const copy = [...this.totalHealth];
+      const index = copy.findIndex(copyArm => copyArm.name === army.name);
+      copy[index].health = army.totalHealthArmy;
+      this.totalHealth = [...copy];
+    }
   }
 }
 

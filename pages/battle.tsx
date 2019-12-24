@@ -1,8 +1,11 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
+import { Button, Divider } from '@material-ui/core';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { IArmyToBattle, ITotalHealth, IDiedArmy } from '../interfaces/interface';
 import Header from '../components/Header';
+import Winner from '../components/Winner';
 
 interface IProps {
   battleStore: {
@@ -10,6 +13,7 @@ interface IProps {
     diedArmy: IDiedArmy[];
     totalHealth: ITotalHealth[];
     startBattle(): void;
+    winnerArmyName: string;
   };
 }
 
@@ -17,22 +21,44 @@ interface IProps {
 @observer
 class Battle extends React.Component<IProps, {}> {
   render() {
-    const { totalHealth, startBattle, diedArmy } = this.props.battleStore;
+    const { totalHealth, startBattle, diedArmy, winnerArmyName } = this.props.battleStore;
     return (
       <div>
         <Header />
         <div className="battle">
-          <h1>TOTAL HEALTH: </h1>
+          {winnerArmyName && <Winner />}
+          <h3>Total health: </h3>
           {totalHealth &&
-            totalHealth.map(({ name, health }, index) => (
-              <span key={`countryKey-${index}`}>{`${name} - ${health}`}</span>
-            ))}
-          <button className="battle__start" onClick={startBattle}>
-            Start
-          </button>
+            totalHealth.map(({ name, health }, index) => {
+              if (health !== 0) {
+                return (
+                  <div key={`countryKey-${index}`} className="battle__item">
+                    <span style={{ width: 100 }}>{`${name}-`}</span>
+                    <LinearProgress
+                      style={{ width: '100%', height: 10 }}
+                      variant="determinate"
+                      value={health}
+                      color="secondary"
+                    />
+                  </div>
+                );
+              }
+            })}
+          {!totalHealth.length && (
+            <Button
+              variant="outlined"
+              style={{ marginBottom: 20, maxWidth: 200 }}
+              color="primary"
+              onClick={startBattle}
+            >
+              Start
+            </Button>
+          )}
         </div>
+        <Divider />
+
         <div className="died__army">
-          <h1>Died army: </h1>
+          <h3>Died army: </h3>
           {diedArmy &&
             diedArmy.map(({ name }, index) => (
               <span key={`diedKey-${index}`}>{`${name} - 0`}</span>
@@ -45,10 +71,9 @@ class Battle extends React.Component<IProps, {}> {
             flex-direction: column;
             max-width: 300px;
           }
-          battle__start {
-            min-width: 150px;
-            padding: 5px 0;
-            margin: auto;
+          .battle__item {
+            display: flex;
+            align-items: center;
           }
         `}</style>
       </div>

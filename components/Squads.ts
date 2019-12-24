@@ -48,11 +48,13 @@ class Squads {
   }
 
   lifeReduction(hp: number): void {
+    this.checkedLifeUnit();
+
     const totalHp: number = hp / this.units.length;
+
     this.units.forEach(unit => {
       unit.lifeReduction(totalHp);
     });
-    this.checkedLifeUnit();
   }
 
   private createVehicles() {

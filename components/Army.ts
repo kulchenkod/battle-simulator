@@ -9,6 +9,7 @@ class Army {
   strategy: string;
   defaultConfig: ICountry;
   init: ConfigBattle;
+  armyLength: number;
 
   constructor() {
     this.init = ConfigBattle.getConfigBattle();
@@ -18,14 +19,16 @@ class Army {
     this.name = this.defaultConfig.country;
     this.army = [];
     this.createSquads();
+    this.armyLength = this.army[0].units.length;
     this.checkingTotalHealthArmy();
   }
 
   checkingTotalHealthArmy() {
-    const totalHp = this.army[0].units.reduce((start: any, item: any) => {
-      return start + item.health / this.army[0].units.length;
-    }, 0);
-    this.totalHealthArmy = Math.floor(totalHp);
+    const totalHp =
+      this.army[0].units.reduce((start: any, item: any) => {
+        return start + item.health;
+      }, 0) / this.armyLength;
+    this.totalHealthArmy = totalHp;
   }
 
   createSquads() {
